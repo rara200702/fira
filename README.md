@@ -1,69 +1,34 @@
-## Illuminate Database
+## Illuminate Queue
 
-The Illuminate Database component is a full database toolkit for PHP, providing an expressive query builder, ActiveRecord style ORM, and schema builder. It currently supports MySQL, Postgres, SQL Server, and SQLite. It also serves as the database layer of the Laravel PHP framework.
+The Laravel Queue component provides a unified API across a variety of different queue services. Queues allow you to defer the processing of a time consuming task, such as sending an e-mail, until a later time, thus drastically speeding up the web requests to your application.
 
 ### Usage Instructions
 
-First, create a new "Capsule" manager instance. Capsule aims to make configuring the library for usage outside of the Laravel framework as easy as possible.
+First, create a new Queue `Capsule` manager instance. Similar to the "Capsule" provided for the Eloquent ORM, the queue Capsule aims to make configuring the library for usage outside of the Laravel framework as easy as possible.
 
 ```PHP
-use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Queue\Capsule\Manager as Queue;
 
-$capsule = new Capsule;
+$queue = new Queue;
 
-$capsule->addConnection([
-    'driver' => 'mysql',
+$queue->addConnection([
+    'driver' => 'beanstalkd',
     'host' => 'localhost',
-    'database' => 'database',
-    'username' => 'root',
-    'password' => 'password',
-    'charset' => 'utf8',
-    'collation' => 'utf8_unicode_ci',
-    'prefix' => '',
+    'queue' => 'default',
 ]);
 
-// Set the event dispatcher used by Eloquent models... (optional)
-use Illuminate\Events\Dispatcher;
-use Illuminate\Container\Container;
-$capsule->setEventDispatcher(new Dispatcher(new Container));
-
 // Make this Capsule instance available globally via static methods... (optional)
-$capsule->setAsGlobal();
-
-// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
-$capsule->bootEloquent();
+$queue->setAsGlobal();
 ```
-
-> `composer require "illuminate/events"` required when you need to use observers with Eloquent.
 
 Once the Capsule instance has been registered. You may use it like so:
 
-**Using The Query Builder**
+```PHP
+// As an instance...
+$queue->push('SendEmail', ['message' => $message]);
 
-```PHP
-$users = Capsule::table('users')->where('votes', '>', 100)->get();
-```
-Other core methods may be accessed directly from the Capsule in the same manner as from the DB facade:
-```PHP
-$results = Capsule::select('select * from users where id = ?', [1]);
+// If setAsGlobal has been called...
+Queue::push('SendEmail', ['message' => $message]);
 ```
 
-**Using The Schema Builder**
-
-```PHP
-Capsule::schema()->create('users', function ($table) {
-    $table->increments('id');
-    $table->string('email')->unique();
-    $table->timestamps();
-});
-```
-
-**Using The Eloquent ORM**
-
-```PHP
-class User extends Illuminate\Database\Eloquent\Model {}
-
-$users = User::where('votes', '>', 1)->get();
-```
-
-For further documentation on using the various database facilities this library provides, consult the [Laravel framework documentation](https://laravel.com/docs).
+For further documentation on using the queue, consult the [Laravel framework documentation](https://laravel.com/docs).
