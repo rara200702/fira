@@ -1,586 +1,734 @@
-# Changelog
+# Change Log
+All notable changes to this project will be documented in this file.
+Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
-All notable changes to `ignition` will be documented in this file
+**Upgrading from 1.x?** See <https://commonmark.thephpleague.com/2.0/upgrading/> for additional information.
 
-## 2.17.6 - 2022-06-30
+## [Unreleased][unreleased]
 
-### What's Changed
+## [2.6.2] - 2025-04-18
 
-- notice if dots have been used in the view name by @WebPajooh in https://github.com/facade/ignition/pull/457
+### Fixed
 
-### New Contributors
+- Fixed Attributes extension parsing regression (#1071)
 
-- @WebPajooh made their first contribution in https://github.com/facade/ignition/pull/457
+## [2.6.1] - 2024-12-29
 
-**Full Changelog**: https://github.com/facade/ignition/compare/2.17.5...2.17.6
+### Fixed
 
-## 2.17.5 - 2022-02-23
+- Rendered list items should only add newlines around block-level children (#1059, #1061)
 
-## What's Changed
+## [2.6.0] - 2024-12-07
 
-- fix solutions section padding by @faissaloux in https://github.com/facade/ignition/pull/433
-- Bump markdown-it from 9.1.0 to 12.3.2 by @dependabot in https://github.com/facade/ignition/pull/446
-- Bump ajv from 6.10.2 to 6.12.6 by @dependabot in https://github.com/facade/ignition/pull/448
-- Fix E_NOTICE when requesting invalid script by @cweiske in https://github.com/facade/ignition/pull/449
+This is a **security release** to address potential denial of service attacks when parsing specially crafted,
+malicious input from untrusted sources (like user input).
 
-## New Contributors
+### Added
 
-- @faissaloux made their first contribution in https://github.com/facade/ignition/pull/433
-- @cweiske made their first contribution in https://github.com/facade/ignition/pull/449
+- Added `max_delimiters_per_line` config option to prevent denial of service attacks when parsing malicious input
+- Added `table/max_autocompleted_cells` config option to prevent denial of service attacks when parsing large tables
+- The `AttributesExtension` now supports attributes without values (#985, #986)
+- The `AutolinkExtension` exposes two new configuration options to override the default behavior (#969, #987):
+    - `autolink/allowed_protocols` - an array of protocols to allow autolinking for
+    - `autolink/default_protocol` - the default protocol to use when none is specified
+- Added `RegexHelper::isWhitespace()` method to check if a given character is an ASCII whitespace character
+- Added `CacheableDelimiterProcessorInterface` to ensure linear complexity for dynamic delimiter processing
+- Added `Bracket` delimiter type to optimize bracket parsing
 
-**Full Changelog**: https://github.com/facade/ignition/compare/2.17.4...2.17.5
+### Changed
 
-## 2.17.4 - 2021-12-27
+- `[` and `]` are no longer added as `Delimiter` objects on the stack; a new `Bracket` type with its own stack is used instead
+- `UrlAutolinkParser` no longer parses URLs with more than 127 subdomains
+- Expanded reference links can no longer exceed 100kb, or the size of the input document (whichever is greater)
+- Delimiters should always provide a non-null value via `DelimiterInterface::getIndex()`
+  - We'll attempt to infer the index based on surrounding delimiters where possible
+- The `DelimiterStack` now accepts integer positions for any `$stackBottom` argument
+- Several small performance optimizations
 
-- fix bug where uninitialized property within a job could break Ignition
+## [2.5.3] - 2024-08-16
 
-## 2.17.3 - 2021-12-23
+### Changed
 
-- allow filtering route parameters using a `toFlare` method
+- Made compatible with CommonMark spec 0.31.1, including:
+  - Remove `source`, add `search` to list of recognized block tags
 
-## 2.17.2 - 2021-11-29
+## [2.5.2] - 2024-08-14
 
-## What's Changed
+### Changed
 
-- Allow overflow-x on solutions with unbreakable words by @willemvb in https://github.com/facade/ignition/pull/431
+- Boolean attributes now require an explicit `true` value (#1040)
 
-**Full Changelog**: https://github.com/facade/ignition/compare/2.17.1...2.17.2
+### Fixed
 
-## 2.17.2 - 2021-11-29
+- Fixed regression where text could be misinterpreted as an attribute (#1040)
 
-- scroll overflow on solutions
+## [2.5.1] - 2024-07-24
 
-## 2.17.1 - 2021-11-25
+### Fixed
 
-- streamline Livewire solutions
+- Fixed attribute parsing incorrectly parsing mustache-like syntax (#1035)
+- Fixed incorrect `Table` start line numbers (#1037)
 
-## 2.17.0 - 2021-11-24
+## [2.5.0] - 2024-07-22
 
-- improve recording of Livewire data
+### Added
 
-## 2.16.1 - 2021-11-16
+- The `AttributesExtension` now supports attributes without values (#985, #986)
+- The `AutolinkExtension` exposes two new configuration options to override the default behavior (#969, #987):
+    - `autolink/allowed_protocols` - an array of protocols to allow autolinking for
+    - `autolink/default_protocol` - the default protocol to use when none is specified
 
-- allow sending of unbinded sql queries to Flare
+### Changed
 
-## 2.16.0 - 2021-10-28
+- Made compatible with CommonMark spec 0.31.0, including:
+    - Allow closing fence to be followed by tabs
+    - Remove restrictive limitation on inline comments
+    - Unicode symbols now treated like punctuation (for purposes of flankingness)
+    - Trailing tabs on the last line of indented code blocks will be excluded
+    - Improved HTML comment matching
+- `Paragraph`s only containing link reference definitions will be kept in the AST until the `Document` is finalized
+    - (These were previously removed immediately after parsing the `Paragraph`)
 
-- improve recording data from jobs (#416)
+### Fixed
 
-## 2.15.0 - 2021-10-11
+- Fixed list tightness not being determined properly in some edge cases
+- Fixed incorrect ending line numbers for several block types in various scenarios
+- Fixed lowercase inline HTML declarations not being accepted
 
-- improve output of flare:test
+## [2.4.4] - 2024-07-22
 
-## 2.14.1 - 2021-10-08
+### Fixed
 
-- update base URL for Flare
+- Fixed SmartPunct extension changing already-formatted quotation marks (#1030)
 
-## 2.14.0 - 2021-10-01
+## [2.4.3] - 2024-07-22
 
-- add support for VScode WSL + SSH remote (#420)
+### Fixed
 
-## 2.13.1 - 2021-09-13
+- Fixed the Attributes extension not supporting CSS level 3 selectors (#1013)
+- Fixed `UrlAutolinkParser` incorrectly parsing text containing `www` anywhere before an autolink (#1025)
 
-- fix namespace of `SentReports` in facade
 
-## 2.13.0 - 2021-09-13
+## [2.4.2] - 2024-02-02
 
-- add tracking uuid (#418)
+### Fixed
 
-## 2.12.1 - 2021-09-08
+- Fixed declaration parser being too strict
+- `FencedCodeRenderer`: don't add `language-` to class if already prefixed
 
-- add support for VS Codium editor (#417)
+### Deprecated
 
-## 2.12.0 - 2021-08-24
+- Returning dynamic values from `DelimiterProcessorInterface::getDelimiterUse()` is deprecated
+    - You should instead implement `CacheableDelimiterProcessorInterface` to help the engine perform caching to avoid performance issues.
+- Failing to set a delimiter's index (or returning `null` from `DelimiterInterface::getIndex()`) is deprecated and will not be supported in 3.0
+- Deprecated `DelimiterInterface::isActive()` and `DelimiterInterface::setActive()`, as these are no longer used by the engine
+- Deprecated `DelimiterStack::removeEarlierMatches()` and `DelimiterStack::searchByCharacter()`, as these are no longer used by the engine
+- Passing a `DelimiterInterface` as the `$stackBottom` argument to `DelimiterStack::processDelimiters()` or `::removeAll()` is deprecated and will not be supported in 3.0; pass the integer position instead.
 
-- add support for collecting information about jobs (#412)
+### Fixed
 
-## 2.11.4 - 2021-08-16
+- Fixed NUL characters not being replaced in the input
+- Fixed quadratic complexity parsing unclosed inline links
+- Fixed quadratic complexity parsing emphasis and strikethrough delimiters
+- Fixed issue where having 500,000+ delimiters could trigger a [known segmentation fault issue in PHP's garbage collection](https://bugs.php.net/bug.php?id=68606)
+- Fixed quadratic complexity deactivating link openers
+- Fixed quadratic complexity parsing long backtick code spans with no matching closers
+- Fixed catastrophic backtracking when parsing link labels/titles
 
-- use npm ci instead of install (#411)
+## [2.4.1] - 2023-08-30
 
-## 2.11.3 - 2021-08-16
+### Fixed
 
-- fix issues with circular dependencies in model route parameters (#408)
-- remove notice about dirty git state in context
-- wrap `AddGitInformation` middleware in try-catch
+- Fixed `ExternalLinkProcessor` not fully disabling the `rel` attribute when configured to do so (#992)
 
-## 2.11.2 - 2021-07-20
+## [2.4.0] - 2023-03-24
 
-- fix issues introduced in 2.11.1 (#403)
+### Added
 
-## 2.11.1 - 2021-07-20
+- Added generic `CommonMarkException` marker interface for all exceptions thrown by the library
+- Added several new specific exception types implementing that marker interface:
+    - `AlreadyInitializedException`
+    - `InvalidArgumentException`
+    - `IOException`
+    - `LogicException`
+    - `MissingDependencyException`
+    - `NoMatchingRendererException`
+    - `ParserLogicException`
+- Added more configuration options to the Heading Permalinks extension (#939):
+    - `heading_permalink/apply_id_to_heading` - When `true`, the `id` attribute will be applied to the heading element itself instead of the `<a>` tag
+    - `heading_permalink/heading_class` - class to apply to the heading element
+    - `heading_permalink/insert` - now accepts `none` to prevent the creation of the `<a>` link
+- Added new `table/alignment_attributes` configuration option to control how table cell alignment is rendered (#959)
 
-- fix sending queued reports on Laravel Vapor queues (#398)
+### Changed
 
-## 2.11.0 - 2021-07-12
+- Change several thrown exceptions from `RuntimeException` to `LogicException` (or something extending it), including:
+    - `CallbackGenerator`s that fail to set a URL or return an expected value
+    - `MarkdownParser` when deactivating the last block parser or attempting to get an active block parser when they've all been closed
+    - Adding items to an already-initialized `Environment`
+    - Rendering a `Node` when no renderer has been registered for it
+- `HeadingPermalinkProcessor` now throws `InvalidConfigurationException` instead of `RuntimeException` when invalid config values are given.
+- `HtmlElement::setAttribute()` no longer requires the second parameter for boolean attributes
+- Several small micro-optimizations
+- Changed Strikethrough to only allow 1 or 2 tildes per the updated GFM spec
 
-- prepare Laravel 9 support
-- remove filp/whoops dependency
-- update front-end dependencies
+### Fixed
 
-## 2.10.2 - 2021-06-11
+- Fixed inaccurate `@throws` docblocks throughout the codebase, including `ConverterInterface`, `MarkdownConverter`, and `MarkdownConverterInterface`.
+    - These previously suggested that only `\RuntimeException`s were thrown, which was inaccurate as `\LogicException`s were also possible.
 
-- fix typo in config/flare.php (#395)
+## [2.3.9] - 2023-02-15
 
-## 2.10.1 - 2021-06-03
+### Fixed
 
-- fix memory leaks in Octane (#393)
+- Fixed autolink extension not detecting some URIs with underscores (#956)
 
-## 2.10.0 - 2021-06-03
+## [2.3.8] - 2022-12-10
 
-- add a solution for lazy loading violations (#392)
+### Fixed
 
-## 2.9.0 - 2021-05-05
+- Fixed parsing issues when `mb_internal_encoding()` is set to something other than `UTF-8` (#951)
 
-- add Xdebug format links for editor (#383)
+## [2.3.7] - 2022-11-03
 
-## 2.8.4 - 2021-04-29
+### Fixed
 
-- avoid making call to Flare when no API key is specified
+- Fixed `TaskListItemMarkerRenderer` not including HTML attributes set on the node by other extensions (#947)
 
-## 2.8.3 - 2021-04-09
+## [2.3.6] - 2022-10-30
 
-- support Octane (#379)
+### Fixed
 
-## 2.8.2 - 2021-04-08
+- Fixed unquoted attribute parsing when closing curly brace is followed by certain characters (like a `.`) (#943)
 
-- censor passwords by default (#377)
+## [2.3.5] - 2022-07-29
 
-## 2.8.1 - 2021-04-08
+### Fixed
 
-- add `censor_request_body_fields` default config option
+- Fixed error using `InlineParserEngine` when no inline parsers are registered in the `Environment` (#908)
 
-## 2.8.0 - 2021-04-08
+## [2.3.4] - 2022-07-17
 
-- add `censor_request_body_fields` config option
+### Changed
 
-## 2.7.0 - 2021-03-30
+- Made a number of small tweaks to the embed extension's parsing behavior to fix #898:
+    - Changed `EmbedStartParser` to always capture embed-like lines in container blocks, regardless of parent block type
+    - Changed `EmbedProcessor` to also remove `Embed` blocks that aren't direct children of the `Document`
+    - Increased the priority of `EmbedProcessor` to `1010`
 
-- adds a debug warning when having debug enabled on a non-local environment (#366)
+### Fixed
 
-## 2.6.1 - 2021-03-30
+- Fixed `EmbedExtension` not parsing embeds following a list block (#898)
 
-- Disable executing solutions on non-local environments or from non-local IP addresses (#364)
+## [2.3.3] - 2022-06-07
 
-## 2.6.0 - 2021-03-24
+### Fixed
 
-- add extra output to test command when executing verbosely
+- Fixed `DomainFilteringAdapter` not reindexing the embed list (#884, #885)
 
-## 2.5.14 - 2021-03-03
+## [2.3.2] - 2022-06-03
 
-- fix ignition not working when there is no argv
+### Fixed
 
-## 2.5.13 - 2021-02-16
+- Fixed FootnoteExtension stripping extra characters from tab-indented footnotes (#881)
 
-- remove custom grouping
+## [2.2.5] - 2022-06-03
 
-## 2.5.12 - 2021-02-15
+### Fixed
 
-- fix wrong config usage (#354)
+- Fixed FootnoteExtension stripping extra characters from tab-indented footnotes (#881)
 
-## 2.5.11 - 2021-02-05
+## [2.3.1] - 2022-05-14
 
-- fix memory leaks caused by log and query recorder (#344)
+### Fixed
 
-## 2.5.10 - 2021-02-02
+- Fixed AutolinkExtension not ignoring trailing strikethrough syntax (#867)
 
-- fix tinker logs not being sent to Flare
+## [2.2.4] - 2022-05-14
 
-## 2.5.9 - 2021-01-26
+### Fixed
 
-- fix logged context not being sent to Flare
+- Fixed AutolinkExtension not ignoring trailing strikethrough syntax (#867)
 
-## 2.5.8 - 2020-12-29
+## [2.3.0] - 2022-04-07
 
-- fix double `$` on PHP 8 (#338)
+### Added
 
-## 2.5.7 - 2020-12-29
+- Added new `EmbedExtension` (#805)
+- Added `DocumentRendererInterface` as a replacement for the now-deprecated `MarkdownRendererInterface`
 
-- fix for breaking change in highlight.js (fixes 2.5.5)
+### Deprecated
 
-## 2.5.6 - 2020-12-29
+- Deprecated `MarkdownRendererInterface`; use `DocumentRendererInterface` instead
 
-- revert to compiled js of 2.5.3
+## [2.2.3] - 2022-02-26
 
-## 2.5.5 - 2020-12-29
+### Fixed
 
-- added compiled js of previous release
+- Fixed front matter parsing with Windows line endings (#821)
 
-## 2.5.4 - 2020-12-29
+## [2.1.3] - 2022-02-26
 
-- added support for Nova text editor (#343)
+### Fixed
 
-## 2.5.3 - 2020-12-08
+- Fixed front matter parsing with Windows line endings (#821)
 
-- Use Livewire compatible compiler engine when using Livewire (#340)
+## [2.0.4] - 2022-02-26
 
-## 2.5.2 - 2020-11-14
+### Fixed
 
-- fix `MakeViewVariableOptionalSolution` to disallow stream wrappers and files that do not end in ".blade.php" (#334)
+- Fixed front matter parsing with Windows line endings (#821)
 
-## 2.5.1 - 2020-11-13
+## [2.2.2] - 2022-02-13
 
-- add support for LiveWire component urls
+### Fixed
 
-## 2.5.0 - 2020-10-27
+- Fixed double-escaping of image alt text (#806, #810)
+- Fixed Psalm typehints for event class names
 
-- add PHP 8.0-dev support
-- remove unnecessary `scrivo/highlight.php` dependency
+## [2.2.1] - 2022-01-25
 
-## 2.4.2 - 2021-03-08
+### Fixed
 
-- fix `MakeViewVariableOptionalSolution` to disallow stream wrappers and files that do not end in .blade.php (#356)
+ - Fixed `symfony/deprecation-contracts` constraint
 
-## 2.4.1 - 2020-10-14
+### Removed
 
-- fix copy casing
+ - Removed deprecation trigger from `MarkdownConverterInterface` to reduce noise
 
-## 2.4.0 - 2020-10-14
+## [2.2.0] - 2022-01-22
 
-- add livewire component discovery solution
+### Added
 
-## 2.3.8 - 2020-10-02
+ - Added new `ConverterInterface`
+ - Added new `MarkdownToXmlConverter` class
+ - Added new `HtmlDecorator` class which can wrap existing renderers with additional HTML tags
+ - Added new `table/wrap` config to apply an optional wrapping/container element around a table (#780)
 
-- Address Missing Mix Manifest Error (#317)
+### Changed
 
-## 2.3.7 - 2020-09-06
+ - `HtmlElement` contents can now consist of any `Stringable`, not just `HtmlElement` and `string`
 
-- add loading state on share button (#309)
-- compatibility fix for L8
+### Deprecated
 
-## 2.3.6 - 2020-08-10
+ - Deprecated `MarkdownConverterInterface` and its `convertToHtml()` method; use `ConverterInterface` and `convert()` instead
 
-- possible security vulnerability: bump elliptic version (#300)
-- possible XSS vulnerability: escape characters in stacktrace and exception title
+## [2.1.2] - 2022-02-13
 
-## 2.3.5 - 2020-08-01
+### Fixed
 
-- catch exception in detectLineNumber for not existing blade files (#299)
+- Fixed double-escaping of image alt text (#806, #810)
+- Fixed Psalm typehints for event class names
 
-## 2.3.4 - 2020-07-27
+## [2.1.1] - 2022-01-02
 
-- fix an error that would throw a blank page when using third party extensions
+### Added
 
-## 2.3.3 -2020-07-14
+ - Added missing return type to `Environment::dispatch()` to fix deprecation warning (#778)
 
-- fix all psalm related issues
+## [2.1.0] - 2021-12-05
 
-## 2.3.2 - 2020-07-14
+### Added
 
-- properly bind singleton (#291)
+- Added support for ext-yaml in FrontMatterExtension (#715)
+- Added support for symfony/yaml v6.0 in FrontMatterExtension (#739)
+- Added new `heading_permalink/aria_hidden` config option (#741)
 
-## 2.3.1 - 2020-07-13
+### Fixed
 
-- improve db name solution (#289)
+ - Fixed PHP 8.1 deprecation warning (#759, #762)
 
-## 2.3.0 - 2020-07-13
+## [2.0.3] - 2022-02-13
 
-- allow override of Dumper via `$_SERVER variable` (#271)
-- make DumpHandler instance manually in DumpRecorder (#286)
-- only setup queues when queue is available (#287)
+### Fixed
 
-## 2.2.0 - 2020-07-13
+- Fixed double-escaping of image alt text (#806, #810)
+- Fixed Psalm typehints for event class names
 
-- add `ignition:make:solution-provider` command
+## [2.0.2] - 2021-08-14
 
-## 2.1.0 - 2020-07-13
+### Changed
 
-- add "Undefined Property" solution (#264)
+- Bumped minimum version of league/config to support PHP 8.1
 
-## 2.0.10 - 2020-07-13
+### Fixed
 
-- correctly detect dump location from ddd (#216)
+- Fixed ability to register block parsers that identify lines starting with letters (#706)
 
-## 2.0.9 - 2020-07-13
+## [2.0.1] - 2021-07-31
 
-- use application contract instead of concrete class (#243)
+### Fixed
 
-## 2.0.8 - 2020-07-12
+- Fixed nested autolinks (#689)
+- Fixed description lists being parsed incorrectly (#692)
+- Fixed Table of Contents not respecting Heading Permalink prefixes (#690)
 
-- do not render solution title tag for empty titles
+## [2.0.0] - 2021-07-24
 
-## 2.0.7 - 2020-06-07
+No changes were introduced since the previous RC2 release.
+See all entries below for a list of changes between 1.x and 2.0.
 
-- Fix `DefaultDbNameSolutionProvider` (#277)
+## [2.0.0-rc2] - 2021-07-17
 
-## 2.0.6 - 2020-06-01
+### Fixed
 
-- remove ability to fix variable names
+- Fixed Mentions inside of links creating nested links against the spec's rules (#688)
 
-## 2.0.5 - 2020-05-29
+## [2.0.0-rc1] - 2021-07-10
 
-- blacklist certain variable names when fixing variable names
+No changes were introduced since the previous release.
 
-## 2.0.4 - 2020-05-18
+## [2.0.0-beta3] - 2021-07-03
 
-- handle exceptions in case the request doesn't have a user (#274)
+### Changed
 
-## 2.0.3 - 2020-04-07
+ - Any leading UTF-8 BOM will be stripped from the input
+ - The `getEnvironment()` method of `CommonMarkConverter` and `GithubFlavoredMarkdownConverter` will always return the concrete, configurable `Environment` for upgrading convenience
+ - Optimized AST iteration
+ - Lots of small micro-optimizations
 
-- support Laravel 8
+## [2.0.0-beta2] - 2021-06-27
 
-## 2.0.2 - 2020-03-18
+### Added
 
-- fix execute solution route not defined (#265)
+- Added new `Node::iterator()` method and `NodeIterator` class for faster AST iteration (#683, #684)
 
-## 2.0.0 - 2020-02-02
+### Changed
 
-- adds support for Laravel 7
-- drop support for Laravel 6 and below
-- git information won't be collected by default anymore (if you need this set `collect_git_information` to `true` in the `flare` config file)
-- `MissingPackageSolutionProvider` was added to the `ignored_solution_providers` because it potentially could be slow.
+- Made compatible with CommonMark spec 0.30.0
+- Optimized link label parsing
+- Optimized AST iteration for a 50% performance boost in some event listeners (#683, #684)
 
-## 1.16.0 - 2020-01-21
+### Fixed
 
-- add named routes (#197)
+- Fixed processing instructions with EOLs
+- Fixed case-insensitive matching for HTML tag types
+- Fixed type 7 HTML blocks incorrectly interrupting lazy paragraphs
+- Fixed newlines in reference labels not collapsing into spaces
+- Fixed link label normalization with escaped newlines
+- Fixed unnecessary AST iteration when no default attributes are configured
 
-## 1.15.0 - 2020-01-21
+## [2.0.0-beta1] - 2021-06-20
 
-- add exception to the bottom of the html (#230)
+### Added
 
-## 1.14.0 - 2020-01-06
+ - **Added three new extensions:**
+   - `FrontMatterExtension` ([see documentation](https://commonmark.thephpleague.com/extensions/front-matter/))
+   - `DescriptionListExtension` ([see documentation](https://commonmark.thephpleague.com/extensions/description-lists/))
+   - `DefaultAttributesExtension` ([see documentation](https://commonmark.thephpleague.com/extensions/default-attributes/))
+ - **Added new `XmlRenderer` to simplify AST debugging** ([see documentation](https://commonmark.thephpleague.com/xml/)) (#431)
+ - **Added the ability to configure disallowed raw HTML tags** (#507)
+ - **Added the ability for Mentions to use multiple characters for their symbol** (#514, #550)
+ - **Added the ability to delegate event dispatching to PSR-14 compliant event dispatcher libraries**
+ - **Added new configuration options:**
+   - Added `heading_permalink/min_heading_level` and `heading_permalink/max_heading_level` options to control which headings get permalinks (#519)
+   - Added `heading_permalink/fragment_prefix` to allow customizing the URL fragment prefix (#602)
+   - Added `footnote/backref_symbol` option for customizing backreference link appearance (#522)
+   - Added `slug_normalizer/max_length` option to control the maximum length of generated URL slugs
+   - Added `slug_normalizer/unique` option to control whether unique slugs should be generated per-document or per-environment
+ - **Added purity markers throughout the codebase** (verified with Psalm)
+ - Added `Query` class to simplify Node traversal when looking to take action on certain Nodes
+ - Added new `HtmlFilter` and `StringContainerHelper` utility classes
+ - Added new `AbstractBlockContinueParser` class to simplify the creation of custom block parsers
+ - Added several new classes and interfaces:
+   - `BlockContinue`
+   - `BlockContinueParserInterface`
+   - `BlockContinueParserWithInlinesInterface`
+   - `BlockStart`
+   - `BlockStartParserInterface`
+   - `ChildNodeRendererInterface`
+   - `ConfigurableExtensionInterface`
+   - `CursorState`
+   - `DashParser` (extracted from `PunctuationParser`)
+   - `DelimiterParser`
+   - `DocumentBlockParser`
+   - `DocumentPreRenderEvent`
+   - `DocumentRenderedEvent`
+   - `EllipsesParser` (extracted from `PunctuationParser`)
+   - `ExpressionInterface`
+   - `FallbackNodeXmlRenderer`
+   - `InlineParserEngineInterface`
+   - `InlineParserMatch`
+   - `MarkdownParserState`
+   - `MarkdownParserStateInterface`
+   - `MarkdownRendererInterface`
+   - `Query`
+   - `RawMarkupContainerInterface`
+   - `ReferenceableInterface`
+   - `RenderedContent`
+   - `RenderedContentInterface`
+   - `ReplaceUnpairedQuotesListener`
+   - `SpecReader`
+   - `TableOfContentsRenderer`
+   - `UniqueSlugNormalizer`
+   - `UniqueSlugNormalizerInterface`
+   - `XmlRenderer`
+   - `XmlNodeRendererInterface`
+ - Added several new methods:
+   - `Cursor::getCurrentCharacter()`
+   - `Environment::createDefaultConfiguration()`
+   - `Environment::setEventDispatcher()`
+   - `EnvironmentInterface::getExtensions()`
+   - `EnvironmentInterface::getInlineParsers()`
+   - `EnvironmentInterface::getSlugNormalizer()`
+   - `FencedCode::setInfo()`
+   - `Heading::setLevel()`
+   - `HtmlRenderer::renderDocument()`
+   - `InlineParserContext::getFullMatch()`
+   - `InlineParserContext::getFullMatchLength()`
+   - `InlineParserContext::getMatches()`
+   - `InlineParserContext::getSubMatches()`
+   - `LinkParserHelper::parsePartialLinkLabel()`
+   - `LinkParserHelper::parsePartialLinkTitle()`
+   - `Node::assertInstanceOf()`
+   - `RegexHelper::isLetter()`
+   - `StringContainerInterface::setLiteral()`
+   - `TableCell::getType()`
+   - `TableCell::setType()`
+   - `TableCell::getAlign()`
+   - `TableCell::setAlign()`
 
-- add indicator that solution is running (#212)
+### Changed
 
-## 1.13.1 - 2020-01-02
-
-- Remove external reference for icons (#134)
-
-## 1.13.0 - 2019-11-27
-
-- Allow custom grouping types
-
-## 1.12.1 - 2019-11-25
-
-- Detect multibyte position offsets when adding linenumbers to the blade view - Fixes #193
-
-## 1.12.0 - 2019-11-14
-
-- Add exception to html (#206)
-- Add a clear exception when passing no parameters to ddd (#205)
-- Ignore JS tests (#215)
-- Fix share report route bug
-
-## 1.11.2 - 2019-10-13
-
-- simplify default Laravel installation (#198)
-
-## 1.11.1 - 2019-10-08
-
-- add conditional line number (#182)
-
-## 1.11.0 - 2019-10-08
-
-- add better error messages for missing validation rules (#125)
-
-## 1.10.0 - 2019-10-07
-
-- Add `ignition:make-solution` command
-- Add default for query binding option (Fixes #183)
-
-## 1.9.2 - 2019-10-04
-
-- Fix service provider registration (Fixes #177)
-
-## 1.9.1 - 2019-10-01
-
-- collapse vendor frames on windows fix (#176)
-
-## 1.9.0 - 2019-09-27
-
-- add ability to send logs to flare
-- add `ddd` function
-
-## 1.8.4 - 2019-09-27
-
-- Resolve configuration from the injected app instead of the helper ([#168](https://github.com/facade/ignition/pull/168))
-
-## 1.8.3 - 2019-09-25
-
-- Remove `select-none` from error message
-- Change line clamp behaviour for longer error messages
-
-## 1.8.2 - 2019-09-20
-
-- fix for `TypeError: Cannot set property 'highlightState' of undefined`
-
-## 1.8.1 - 2019-09-20
-
-- Revert javascript assets via URL - Fixes #161
-
-## 1.8.0 - 2019-09-18
-
-- added solution for running Laravel Dusk in production ([#121](https://github.com/facade/ignition/pull/121))
-- Automatically fix blade variable typos and optional variables ([#38](https://github.com/facade/ignition/pull/38))
-
-## 1.7.1 - 2019-09-18
-
-- Use url helper to generate housekeeping endpoints
-
-## 1.7.0 - 2019-09-18
-
-- Add the ability to define a query collector max value ([#153](https://github.com/facade/ignition/pull/153))
-
-## 1.6.10 - 2019-09-18
-
-- fix `__invoke` method name in solution ([#151](https://github.com/facade/ignition/pull/151))
-
-## 1.6.9 - 2019-09-18
-
-- Add noscript trace information - fixes [#146](https://github.com/facade/ignition/issues/146)
-
-## 1.6.8 - 2019-09-18
-
-- Use javascript content type for asset response - fixes [#149](https://github.com/facade/ignition/issues/149)
-
-## 1.6.7 - 2019-09-18
-
-- Load javascript assets via URL. Fixes [#16](https://github.com/facade/ignition/issues/16)
-
-## 1.6.6 - 2019-09-16
-
-- Prevent undefined index exception in `TestCommand`
-
-## 1.6.5 - 2019-09-13
-
-- Ignore invalid characters in JSON encoding. Fixes [#138](https://github.com/facade/ignition/issues/138)
-
-## 1.6.4 - 2019-09-13
-
-- add no-index on error page
-
-## 1.6.3 - 2019-09-12
-
-- Fix `RouteNotDefinedSolutionProvider` in Laravel 5
-
-## 1.6.2 - 2019-09-12
-
-- updated publishing tag from default config
-
-## 1.6.1 - 2019-09-12
-
-- Resolve configuration from the injected application instead of the helper - Fixes [#131](https://github.com/facade/ignition/issues/131)
-
-## 1.6.0 - 2019-09-09
-
-- add `RouteNotDefined` solution provider ([#113](https://github.com/facade/ignition/pull/113))
-
-## 1.5.0 - 2019-09-09
-
-- suggest running migrations when a column is missing ([#83](https://github.com/facade/ignition/pull/83))
-
-## 1.4.19 - 2019-09-09
-
-- Remove quotation from git commit url ([#89](https://github.com/facade/ignition/pull/89))
-
-## 1.4.18 - 2019-09-09
-
-- Fix open_basedir restriction when looking up config file. Fixes ([#120](https://github.com/facade/ignition/pull/120))
-
-## 1.4.17 - 2019-09-06
-
-- Remove Inter, Operator from font stack. Fixes [#74](https://github.com/facade/ignition/issues/74)
-
-## 1.4.15 - 2019-09-05
-
-- Use previous exception trace for view exceptions. Fixes [#107](https://github.com/facade/ignition/issues/107)
-
-## 1.4.14 - 2019-09-05
-
-- Use DIRECTORY_SEPARATOR to fix an issue with blade view lookups in Windows
-
-## 1.4.13 - 2019-09-05
-
-- Use Laravel style comments
-
-## 1.4.12 - 2019-09-04
-
-- Use a middleware to protect ignition routes ([#93](https://github.com/facade/ignition/pull/93))
-
-## 1.4.11 - 2019-09-04
-
-- Use exception line number as fallbacks for view errors
-
-## 1.4.10 - 2019-09-04
-
-- Wrap solution provider lookup in a try-catch block
-
-## 1.4.9 - 2019-09-04
-
-- Lookup the first exception when linking to Telescope
-
-## 1.4.8 - 2019-09-04
-
-- pass an empty string to query if no connection name is available - fixes [#86](https://github.com/facade/ignition/issues/86)
-
-## 1.4.7 - 2019-09-04
-
-- Match whoops minimum version constraint with Laravel 6
-
-## 1.4.6 - 2019-09-04
-
-- Use empty array for default ignored solution providers
-
-## 1.4.5 - 2019-09-03
-
-- fix for new Laravel 6 installs
-
-## 1.4.4 - 2019-09-03
-
-- Suggest default database name in Laravel 6
-- Add void return type to FlareHandler::write()
-
-## 1.4.3 - 2019-09-03
-
-- allow monolog v2
-
-## 1.4.2 - 2019-09-03
-
-- style fixes
-
-## 1.4.1 - 2019-09-03
-
-- Change `remote-sites-path` and `local-sites-path` config keys to us snake case
-
-## 1.4.0 - 2019-09-03
-
-- add `enable_runnable_solutions` key to config file
-
-## 1.3.0 - 2019-09-02
-
-- add `MergeConflictSolutionProvider`
-
-## 1.2.0 - 2019-09-02
-
-- add `ignored_solution_providers` key to config file
-
-## 1.1.1 - 2019-09-02
-
-- Fixed context tab crash when not using git ([#24](https://github.com/facade/ignition/issues/24))
-
-## 1.1.0 - 2019-09-02
-
-- Fixed an error that removed the ability to register custom blade directives.
-- Fixed an error that prevented solution execution in Laravel 5.5 and 5.6
-- The "Share" button can now be disabled in the configuration file
-- Fixes an error when trying to log `null` values
-
-## 1.0.4 - 2019-09-02
-
-- Check if the authenticated user has a `toArray` method available, before collecting user data
-
-## 1.0.3 - 2019-09-02
-
-- Corrected invalid link in config file
-
-## 1.0.2 - 2019-09-02
-
-- Fixed an error in the `DefaultDbNameSolutionProvider` that could cause an infinite loop in Laravel < 5.6.28
-
-## 1.0.1 - 2019-08-31
-
-- add support for L5.5 & 5.6 ([#21](https://github.com/facade/ignition/pull/21))
-
-## 1.0.0 - 2019-08-30
-
-- initial release
+ - **Changed the converter return type**
+   - `CommonMarkConverter::convertToHtml()` now returns an instance of `RenderedContentInterface`. This can be cast to a string for backward compatibility with 1.x.
+ - **Table of Contents items are no longer wrapped with `<p>` tags** (#613)
+ - **Heading Permalinks now link to element IDs instead of using `name` attributes** (#602)
+ - **Heading Permalink IDs and URL fragments now have a `content` prefix by default** (#602)
+ - **Changes to configuration options:**
+     - `enable_em` has been renamed to `commonmark/enable_em`
+     - `enable_strong` has been renamed to `commonmark/enable_strong`
+     - `use_asterisk` has been renamed to `commonmark/use_asterisk`
+     - `use_underscore` has been renamed to `commonmark/use_underscore`
+     - `unordered_list_markers` has been renamed to `commonmark/unordered_list_markers`
+     - `mentions/*/symbol` has been renamed to `mentions/*/prefix`
+     - `mentions/*/regex` has been renamed to `mentions/*/pattern` and requires partial regular expressions (without delimiters or flags)
+     - `max_nesting_level` now defaults to `PHP_INT_MAX` and no longer supports floats
+     - `heading_permalink/slug_normalizer` has been renamed to `slug_normalizer/instance`
+ - **Event dispatching is now fully PSR-14 compliant**
+ - **Moved and renamed several classes** - [see the full list here](https://commonmark.thephpleague.com/2.0/upgrading/#classesnamespaces-renamed)
+ - The `HeadingPermalinkExtension` and `FootnoteExtension` were modified to ensure they never produce a slug which conflicts with slugs created by the other extension
+ - `SlugNormalizer::normalizer()` now supports optional prefixes and max length options passed in via the `$context` argument
+ - The `AbstractBlock::$data` and `AbstractInline::$data` arrays were replaced with a `Data` array-like object on the base `Node` class
+ - **Implemented a new approach to block parsing.** This was a massive change, so here are the highlights:
+   - Functionality previously found in block parsers and node elements has moved to block parser factories and block parsers, respectively ([more details](https://commonmark.thephpleague.com/2.0/upgrading/#new-block-parsing-approach))
+   - `ConfigurableEnvironmentInterface::addBlockParser()` is now `EnvironmentBuilderInterface::addBlockParserFactory()`
+   - `ReferenceParser` was re-implemented and works completely different than before
+   - The paragraph parser no longer needs to be added manually to the environment
+ - **Implemented a new approach to inline parsing** where parsers can now specify longer strings or regular expressions they want to parse (instead of just single characters):
+   - `InlineParserInterface::getCharacters()` is now `getMatchDefinition()` and returns an instance of `InlineParserMatch`
+   - `InlineParserContext::__construct()` now requires the contents to be provided as a `Cursor` instead of a `string`
+ - **Implemented delimiter parsing as a special type of inline parser** (via the new `DelimiterParser` class)
+ - **Changed block and inline rendering to use common methods and interfaces**
+   - `BlockRendererInterface` and `InlineRendererInterface` were replaced by `NodeRendererInterface` with slightly different parameters. All core renderers now implement this interface.
+   - `ConfigurableEnvironmentInterface::addBlockRenderer()` and `addInlineRenderer()` were combined into `EnvironmentBuilderInterface::addRenderer()`
+   - `EnvironmentInterface::getBlockRenderersForClass()` and `getInlineRenderersForClass()` are now just `getRenderersForClass()`
+ - **Completely refactored the Configuration implementation**
+   - All configuration-specific classes have been moved into a new `league/config` package with a new namespace
+   - `Configuration` objects must now be configured with a schema and all options must match that schema - arbitrary keys are no longer permitted
+   - `Configuration::__construct()` no longer accepts the default configuration values - use `Configuration::merge()` instead
+   - `ConfigurationInterface` now only contains a `get(string $key)`; this method no longer allows arbitrary default values to be returned if the option is missing
+   - `ConfigurableEnvironmentInterface` was renamed to `EnvironmentBuilderInterface`
+   - `ExtensionInterface::register()` now requires an `EnvironmentBuilderInterface` param instead of `ConfigurableEnvironmentInterface`
+ - **Added missing return types to virtually every class and interface method**
+ - Re-implemented the GFM Autolink extension using the new inline parser approach instead of document processors
+   - `EmailAutolinkProcessor` is now `EmailAutolinkParser`
+   - `UrlAutolinkProcessor` is now `UrlAutolinkParser`
+ - `HtmlElement` can now properly handle array (i.e. `class`) and boolean (i.e. `checked`) attribute values
+ - `HtmlElement` automatically flattens any attributes with array values into space-separated strings, removing duplicate entries
+ - Combined separate classes/interfaces into one:
+   - `DisallowedRawHtmlRenderer` replaces `DisallowedRawHtmlBlockRenderer` and `DisallowedRawHtmlInlineRenderer`
+   - `NodeRendererInterface` replaces `BlockRendererInterface` and `InlineRendererInterface`
+ - Renamed the following methods:
+   - `Environment` and `ConfigurableEnvironmentInterface`:
+     - `addBlockParser()` is now `addBlockStartParser()`
+   - `ReferenceMap` and `ReferenceMapInterface`:
+     - `addReference()` is now `add()`
+     - `getReference()` is now `get()`
+     - `listReferences()` is now `getIterator()`
+   - Various node (block/inline) classes:
+     - `getContent()` is now `getLiteral()`
+     - `setContent()` is now `setLiteral()`
+ - Moved and renamed the following constants:
+   - `EnvironmentInterface::HTML_INPUT_ALLOW` is now `HtmlFilter::ALLOW`
+   - `EnvironmentInterface::HTML_INPUT_ESCAPE` is now `HtmlFilter::ESCAPE`
+   - `EnvironmentInterface::HTML_INPUT_STRIP` is now `HtmlFilter::STRIP`
+   - `TableCell::TYPE_HEAD` is now `TableCell::TYPE_HEADER`
+   - `TableCell::TYPE_BODY` is now `TableCell::TYPE_DATA`
+ - Changed the visibility of the following properties:
+   - `AttributesInline::$attributes` is now `private`
+   - `AttributesInline::$block` is now `private`
+   - `TableCell::$align` is now `private`
+   - `TableCell::$type` is now `private`
+   - `TableSection::$type` is now `private`
+ - Several methods which previously returned `$this` now return `void`
+   - `Delimiter::setPrevious()`
+   - `Node::replaceChildren()`
+   - `Context::setTip()`
+   - `Context::setContainer()`
+   - `Context::setBlocksParsed()`
+   - `AbstractStringContainer::setContent()`
+   - `AbstractWebResource::setUrl()`
+ - Several classes are now marked `final`:
+   - `ArrayCollection`
+   - `Emphasis`
+   - `FencedCode`
+   - `Heading`
+   - `HtmlBlock`
+   - `HtmlElement`
+   - `HtmlInline`
+   - `IndentedCode`
+   - `Newline`
+   - `Strikethrough`
+   - `Strong`
+   - `Text`
+ - `Heading` nodes no longer directly contain a copy of their inner text
+ - `StringContainerInterface` can now be used for inlines, not just blocks
+ - `ArrayCollection` only supports integer keys
+ - `HtmlElement` now implements `Stringable`
+ - `Cursor::saveState()` and `Cursor::restoreState()` now use `CursorState` objects instead of arrays
+ - `NodeWalker::next()` now enters, traverses any children, and leaves all elements which may have children (basically all blocks plus any inlines with children). Previously, it only did this for elements explicitly marked as "containers".
+ - `InvalidOptionException` was removed
+ - Anything with a `getReference(): ReferenceInterface` method now implements `ReferencableInterface`
+ - The `SmartPunct` extension now replaces all unpaired `Quote` elements with `Text` elements towards the end of parsing, making the `QuoteRenderer` unnecessary
+ - Several changes made to the Footnote extension:
+   - Footnote identifiers can no longer contain spaces
+   - Anonymous footnotes can now span subsequent lines
+   - Footnotes can now contain multiple lines of content, including sub-blocks, by indenting them
+   - Footnote event listeners now have numbered priorities (but still execute in the same order)
+   - Footnotes must now be separated from previous content by a blank line
+ - The line numbers (keys) returned via `MarkdownInput::getLines()` now start at 1 instead of 0
+ - `DelimiterProcessorCollectionInterface` now extends `Countable`
+ - `RegexHelper::PARTIAL_` constants must always be used in case-insensitive contexts
+ - `HeadingPermalinkProcessor` no longer accepts text normalizers via the constructor - these must be provided via configuration instead
+ - Blocks which can't contain inlines will no longer be asked to render inlines
+ - `AnonymousFootnoteRefParser` and `HeadingPermalinkProcessor` now implement `EnvironmentAwareInterface` instead of `ConfigurationAwareInterface`
+ - The second argument to `TextNormalizerInterface::normalize()` must now be an array
+ - The `title` attribute for `Link` and `Image` nodes is now stored using a dedicated property instead of stashing it in `$data`
+ - `ListData::$delimiter` now returns either `ListBlock::DELIM_PERIOD` or `ListBlock::DELIM_PAREN` instead of the literal delimiter
+
+### Fixed
+
+ - **Fixed parsing of footnotes without content**
+ - **Fixed rendering of orphaned footnotes and footnote refs**
+ - **Fixed some URL autolinks breaking too early** (#492)
+ - Fixed `AbstractStringContainer` not actually being `abstract`
+
+### Removed
+
+ - **Removed support for PHP 7.1, 7.2, and 7.3** (#625, #671)
+ - **Removed all previously-deprecated functionality:**
+   - Removed the ability to pass custom `Environment` instances into the `CommonMarkConverter` and `GithubFlavoredMarkdownConverter` constructors
+   - Removed the `Converter` class and `ConverterInterface`
+   - Removed the `bin/commonmark` script
+   - Removed the `Html5Entities` utility class
+   - Removed the `InlineMentionParser` (use `MentionParser` instead)
+   - Removed `DefaultSlugGenerator` and `SlugGeneratorInterface` from the `Extension/HeadingPermalink/Slug` sub-namespace (use the new ones under `./SlugGenerator` instead)
+   - Removed the following `ArrayCollection` methods:
+     - `add()`
+     - `set()`
+     - `get()`
+     - `remove()`
+     - `isEmpty()`
+     - `contains()`
+     - `indexOf()`
+     - `containsKey()`
+     - `replaceWith()`
+     - `removeGaps()`
+   - Removed the `ConfigurableEnvironmentInterface::setConfig()` method
+   - Removed the `ListBlock::TYPE_UNORDERED` constant
+   - Removed the `CommonMarkConverter::VERSION` constant
+   - Removed the `HeadingPermalinkRenderer::DEFAULT_INNER_CONTENTS` constant
+   - Removed the `heading_permalink/inner_contents` configuration option
+ - **Removed now-unused classes:**
+   - `AbstractStringContainerBlock`
+   - `BlockRendererInterface`
+   - `Context`
+   - `ContextInterface`
+   - `Converter`
+   - `ConverterInterface`
+   - `InlineRendererInterface`
+   - `PunctuationParser` (was split into two classes: `DashParser` and `EllipsesParser`)
+   - `QuoteRenderer`
+   - `UnmatchedBlockCloser`
+ - Removed the following methods, properties, and constants:
+   - `AbstractBlock::$open`
+   - `AbstractBlock::$lastLineBlank`
+   - `AbstractBlock::isContainer()`
+   - `AbstractBlock::canContain()`
+   - `AbstractBlock::isCode()`
+   - `AbstractBlock::matchesNextLine()`
+   - `AbstractBlock::endsWithBlankLine()`
+   - `AbstractBlock::setLastLineBlank()`
+   - `AbstractBlock::shouldLastLineBeBlank()`
+   - `AbstractBlock::isOpen()`
+   - `AbstractBlock::finalize()`
+   - `AbstractBlock::getData()`
+   - `AbstractInline::getData()`
+   - `ConfigurableEnvironmentInterface::addBlockParser()`
+   - `ConfigurableEnvironmentInterface::mergeConfig()`
+   - `Delimiter::setCanClose()`
+   - `EnvironmentInterface::getConfig()`
+   - `EnvironmentInterface::getInlineParsersForCharacter()`
+   - `EnvironmentInterface::getInlineParserCharacterRegex()`
+   - `HtmlRenderer::renderBlock()`
+   - `HtmlRenderer::renderBlocks()`
+   - `HtmlRenderer::renderInline()`
+   - `HtmlRenderer::renderInlines()`
+   - `Node::isContainer()`
+   - `RegexHelper::matchAll()` (use the new `matchFirst()` method instead)
+   - `RegexHelper::REGEX_WHITESPACE`
+ - Removed the second `$contents` argument from the `Heading` constructor
+
+### Deprecated
+
+**The following things have been deprecated and will not be supported in v3.0:**
+
+ - `Environment::mergeConfig()` (set configuration before instantiation instead)
+ - `Environment::createCommonMarkEnvironment()` and `Environment::createGFMEnvironment()`
+    - Alternative 1: Use `CommonMarkConverter` or `GithubFlavoredMarkdownConverter` if you don't need to customize the environment
+    - Alternative 2: Instantiate a new `Environment` and add the necessary extensions yourself
+
+[unreleased]: https://github.com/thephpleague/commonmark/compare/2.6.1...2.6.2
+[2.6.2]: https://github.com/thephpleague/commonmark/compare/2.6.1...2.6.2
+[2.6.1]: https://github.com/thephpleague/commonmark/compare/2.6.0...2.6.1
+[2.6.0]: https://github.com/thephpleague/commonmark/compare/2.5.3...2.6.0
+[2.5.3]: https://github.com/thephpleague/commonmark/compare/2.5.2...2.5.3
+[2.5.2]: https://github.com/thephpleague/commonmark/compare/2.5.1...2.5.2
+[2.5.1]: https://github.com/thephpleague/commonmark/compare/2.5.0...2.5.1
+[2.5.0]: https://github.com/thephpleague/commonmark/compare/2.4.4...2.5.0
+[2.4.4]: https://github.com/thephpleague/commonmark/compare/2.4.3...2.4.4
+[2.4.3]: https://github.com/thephpleague/commonmark/compare/2.4.2...2.4.3
+[2.4.2]: https://github.com/thephpleague/commonmark/compare/2.4.1...2.4.2
+[2.4.1]: https://github.com/thephpleague/commonmark/compare/2.4.0...2.4.1
+[2.4.0]: https://github.com/thephpleague/commonmark/compare/2.3.9...2.4.0
+[2.3.9]: https://github.com/thephpleague/commonmark/compare/2.3.8...2.3.9
+[2.3.8]: https://github.com/thephpleague/commonmark/compare/2.3.7...2.3.8
+[2.3.7]: https://github.com/thephpleague/commonmark/compare/2.3.6...2.3.7
+[2.3.6]: https://github.com/thephpleague/commonmark/compare/2.3.5...2.3.6
+[2.3.5]: https://github.com/thephpleague/commonmark/compare/2.3.4...2.3.5
+[2.3.4]: https://github.com/thephpleague/commonmark/compare/2.3.3...2.3.4
+[2.3.3]: https://github.com/thephpleague/commonmark/compare/2.3.2...2.3.3
+[2.3.2]: https://github.com/thephpleague/commonmark/compare/2.3.2...main
+[2.3.1]: https://github.com/thephpleague/commonmark/compare/2.3.0...2.3.1
+[2.3.0]: https://github.com/thephpleague/commonmark/compare/2.2.3...2.3.0
+[2.2.5]: https://github.com/thephpleague/commonmark/compare/2.2.4...2.2.5
+[2.2.4]: https://github.com/thephpleague/commonmark/compare/2.2.3...2.2.4
+[2.2.3]: https://github.com/thephpleague/commonmark/compare/2.2.2...2.2.3
+[2.2.2]: https://github.com/thephpleague/commonmark/compare/2.2.1...2.2.2
+[2.2.1]: https://github.com/thephpleague/commonmark/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/thephpleague/commonmark/compare/2.1.1...2.2.0
+[2.1.3]: https://github.com/thephpleague/commonmark/compare/2.1.2...2.1.3
+[2.1.2]: https://github.com/thephpleague/commonmark/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/thephpleague/commonmark/compare/2.0.2...2.1.1
+[2.1.0]: https://github.com/thephpleague/commonmark/compare/2.0.2...2.1.0
+[2.0.4]: https://github.com/thephpleague/commonmark/compare/2.0.3...2.0.4
+[2.0.3]: https://github.com/thephpleague/commonmark/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/thephpleague/commonmark/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/thephpleague/commonmark/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/thephpleague/commonmark/compare/2.0.0-rc2...2.0.0
+[2.0.0-rc2]: https://github.com/thephpleague/commonmark/compare/2.0.0-rc1...2.0.0-rc2
+[2.0.0-rc1]: https://github.com/thephpleague/commonmark/compare/2.0.0-beta3...2.0.0-rc1
+[2.0.0-beta3]: https://github.com/thephpleague/commonmark/compare/2.0.0-beta2...2.0.0-beta3
+[2.0.0-beta2]: https://github.com/thephpleague/commonmark/compare/2.0.0-beta1...2.0.0-beta2
+[2.0.0-beta1]: https://github.com/thephpleague/commonmark/compare/1.6...2.0.0-beta1
